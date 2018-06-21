@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Result";
+    var result =  ViewData["uid"];
+}
+
+@if (result!=null)
+{
+    <h2>Your task is running...This page will auto refresh</h2>
+    @:Task id: @result.ToString()
+}
+else
+{
+    <h2>Not found your task</h2>
+    
+}

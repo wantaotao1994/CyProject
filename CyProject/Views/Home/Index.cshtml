@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+  
+<div class="row">
+
+    <form enctype="multipart/form-data" action="/home/UploadFastQFileAsync" method="post">
+        <div class="form-group">
+              
+            <input class="btn" name="file" id="file"   type="file" />
+            <label for="file">File input</label>
+
+        </div>
+
+ 
+        <input class="btn btn-info" type="submit"  />
+    </form>
+</div>
