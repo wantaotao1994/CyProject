@@ -10,9 +10,10 @@ namespace QuickTest
 
         static void Main(string[] args)
         {
-            //CommandExcute.Excute();
+            CommandExcute commandExcute = new CommandExcute("sh","","test.sh test.txt out.txt");
+            commandExcute.Excute();
 
-
+            Console.ReadLine();
             //Console.ReadLine();
         }
     }

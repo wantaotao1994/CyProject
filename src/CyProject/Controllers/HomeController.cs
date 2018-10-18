@@ -41,12 +41,49 @@ namespace CyProject.Controllers
             return View();
         }
 
+        public async Task<IActionResult> GetExcuteTask2()
+        {
+            string id = HttpContext.Session.GetString("guid");
+            if (string.IsNullOrEmpty(id))
+            {
+                bool check = CommandTaskQueue.CommandExcuteSet.ContainsKey(id);
+                if (check)
+                {
+                    var command = CommandTaskQueue.CommandExcuteSet[id];
+                    if (command.IsCommplete) //complete
+                    {
+                        string outPath = command.OutFilePath;
+
+                        FileStream fileStream = new FileStream(outPath, FileMode.Open);
+
+                        return File(fileStream, "text/comma-separated-values");
+                    }
+                    else
+                    {
+                        return Json(new GetExcuteTaskRes()
+                        {
+                            Status = 1
+                        });
+                    }
+                }
+
+            }
+
+            return Json(new GetExcuteTaskRes()
+            {
+                Status = 2,
+                Message = "错误 没有找到您的任务"
+
+            });
+        }
+
+
+
         public async Task<IActionResult> GetExcuteTask()
         {
             string id = HttpContext.Session.GetString("guid");
             if (string.IsNullOrEmpty(id))
             {
-
                 bool check = CommandTaskQueue.CommandExcuteSet.ContainsKey(id);
                 if (check)
                 {

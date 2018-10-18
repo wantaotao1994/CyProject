@@ -6,14 +6,14 @@ namespace CommanderHelper
     public class CommandExcute
     {
         private string _path;
-        private string _arg;
+        string [] _arg;
 
         public bool IsCommplete { get; private set; } = false;
 
 
         public string OutFilePath { get; private set; }
 
-        public CommandExcute(string shPath,string outPath ,string arg )
+        public CommandExcute(string shPath,string outPath ,params string [] arg )
         {
             _path = shPath;
             _arg = arg;
@@ -27,8 +27,13 @@ namespace CommanderHelper
 
         private void ExcuteCommand()
         {
-            var psi = new ProcessStartInfo(_path, _arg) { RedirectStandardOutput = true };
-
+            string par = "";
+            foreach (var item in _arg)
+            {
+                par += $"{item} ";
+            }
+            var psi = new ProcessStartInfo(_path, par) { RedirectStandardOutput = true };
+            Console.WriteLine($"Begin Start Commond:{par}");
             try
             {
                 //启动
@@ -62,8 +67,9 @@ namespace CommanderHelper
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error:{e.Message}:\n {e.StackTrace}");
+                Console.ResetColor();
             }
           
         }

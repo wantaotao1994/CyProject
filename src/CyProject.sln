@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommanderHelper", "Commande
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickTest", "QuickTest\QuickTest.csproj", "{E126FAA8-E5D2-409C-B4B1-0F5C0FCDE752}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyProject.Model", "CyProject.Model\CyProject.Model.csproj", "{74DB9EC4-EF41-4BC1-9048-2A572EC6B788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CyProject.Model", "CyProject.Model\CyProject.Model.csproj", "{74DB9EC4-EF41-4BC1-9048-2A572EC6B788}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyProject.Schedule", "CyProject.Schedule\CyProject.Schedule.csproj", "{7EEBA48E-20B3-4877-BE7E-E3D430B880ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{74DB9EC4-EF41-4BC1-9048-2A572EC6B788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74DB9EC4-EF41-4BC1-9048-2A572EC6B788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74DB9EC4-EF41-4BC1-9048-2A572EC6B788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EEBA48E-20B3-4877-BE7E-E3D430B880ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EEBA48E-20B3-4877-BE7E-E3D430B880ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EEBA48E-20B3-4877-BE7E-E3D430B880ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EEBA48E-20B3-4877-BE7E-E3D430B880ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
