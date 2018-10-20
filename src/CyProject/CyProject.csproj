@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CommanderHelper\CommanderHelper.csproj" />
     <ProjectReference Include="..\CyProject.Model\CyProject.Model.csproj" />
+    <ProjectReference Include="..\CyProject.Schedule\CyProject.Schedule.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="wantaotao.sh">

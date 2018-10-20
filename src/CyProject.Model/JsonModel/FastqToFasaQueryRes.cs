@@ -11,5 +11,6 @@ namespace CyProject.Model.JsonModel
         [JsonProperty("guid")]
         public string Guid { get; set; }
 
+        
     }
 }

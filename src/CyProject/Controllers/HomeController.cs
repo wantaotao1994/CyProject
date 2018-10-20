@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using CommanderHelper;
 using CyProject.Model.JsonModel;
+using CyProject.Schedule;
+using CyProject.Model;
 
 namespace CyProject.Controllers
 {
@@ -33,101 +35,92 @@ namespace CyProject.Controllers
             return View();
         }
 
-
-
-
         public IActionResult Privacy()
         {
             return View();
         }
 
-        public async Task<IActionResult> GetExcuteTask2()
-        {
-            string id = HttpContext.Session.GetString("guid");
-            if (string.IsNullOrEmpty(id))
-            {
-                bool check = CommandTaskQueue.CommandExcuteSet.ContainsKey(id);
-                if (check)
-                {
-                    var command = CommandTaskQueue.CommandExcuteSet[id];
-                    if (command.IsCommplete) //complete
-                    {
-                        string outPath = command.OutFilePath;
+    
 
-                        FileStream fileStream = new FileStream(outPath, FileMode.Open);
+        /// <summary>
+        /// 获取队列情况
+        /// </summary>
+        /// <returns>The task queue.</returns>
+        /// <param name="id">Identifier.</param>
+        public  int  GetTaskQueue(string id){
+            return  TaskSchedule.GetIndex(id);
 
-                        return File(fileStream, "text/comma-separated-values");
-                    }
-                    else
-                    {
-                        return Json(new GetExcuteTaskRes()
-                        {
-                            Status = 1
-                        });
-                    }
-                }
-
-            }
-
-            return Json(new GetExcuteTaskRes()
-            {
-                Status = 2,
-                Message = "错误 没有找到您的任务"
-
-            });
         }
 
-
-
-        public async Task<IActionResult> GetExcuteTask()
+        /// <summary>
+        /// 二代测序
+        /// </summary>
+        /// <returns>The task one.</returns>
+        /// <param name="files">Files.</param>
+        public async Task<FastqToFasaQueryRes>  BeginTaskOne(List<IFormFile> files)
         {
-            string id = HttpContext.Session.GetString("guid");
-            if (string.IsNullOrEmpty(id))
+            string tempBasePath =   CheckBaseTempPath();
+            string inFastqPath = "";
+            string iRefFaPath = "";
+            if (Request.Form.Files.Count > 0)  //get  first
             {
-                bool check = CommandTaskQueue.CommandExcuteSet.ContainsKey(id);
-                if (check)
+                string fileFullPath = tempBasePath + DateTime.Now.Millisecond + Request.Form.Files[0].FileName;
+                foreach (var item in files)
                 {
-                    var command = CommandTaskQueue.CommandExcuteSet[id];
-                    if (command.IsCommplete) //complete
+                    using (var stream = new FileStream(fileFullPath, FileMode.Create))
                     {
-                        string outPath = command.OutFilePath;
-
-                        FileStream fileStream = new FileStream(outPath, FileMode.Open);
-
-                        return File(fileStream, "text/comma-separated-values");
+                        
+                        await item.CopyToAsync(stream);
                     }
-                    else
+                    if (item.Name.Contains(".fasq"))
                     {
-                        return Json(new GetExcuteTaskRes() {
-                            Status = 1
-                        });
+                        inFastqPath = fileFullPath;
+                    }
+                    else if (item.Name.Contains(".fa"))
+                    {
+                        iRefFaPath = fileFullPath;
                     }
                 }
+                string guid = new Guid().ToString("N");
+                HttpContext.Session.SetString("guid", guid);
+                if (string.IsNullOrEmpty(inFastqPath) ||string.IsNullOrEmpty(iRefFaPath))
+                {
+                    return new FastqToFasaQueryRes()
+                    {
+                        Code = 500,
+                        Message= "上传文件不正确"
+                    };
+                }
+                TaskSchedule.Push(new KeyValuePair<string, Task2Model>(guid, new Task2Model()
+                {
+                    Id = guid,
+                    InFastqPath = inFastqPath,
+                    InRefFaPath = iRefFaPath,
+                    IsComplete = false,
 
+                }));
+                return new FastqToFasaQueryRes()
+                {
+                    Code = 0,
+                    Guid = guid
+                };
             }
 
-            return Json(new GetExcuteTaskRes()
+            return new FastqToFasaQueryRes()
             {
-                Status = 2,
-                Message="错误 没有找到您的任务"
+                Code = 500,
 
-            });
+            };
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UploadFastQFileAsync(List<IFormFile> files)
         {
-            var filePath = @"AppData/temp";
 
-            if (!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-
+            string tempBasePath =   CheckBaseTempPath();
             if (Request.Form.Files.Count > 0)  //get  first
             {
-                string fileFullPath = filePath + DateTime.Now.Millisecond + Request.Form.Files[0].FileName;
+                string fileFullPath = tempBasePath + DateTime.Now.Millisecond + Request.Form.Files[0].FileName;
                 using (var stream = new FileStream(fileFullPath, FileMode.Create))
                 {
                     await Request.Form.Files[0].CopyToAsync(stream);
@@ -161,6 +154,17 @@ namespace CyProject.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private  string  CheckBaseTempPath(){
+            var filePath = @"AppData/temp";
+
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            return filePath;
         }
     }
 }

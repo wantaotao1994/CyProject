@@ -13,7 +13,7 @@ namespace CommanderHelper
 
         public string OutFilePath { get; private set; }
 
-        public CommandExcute(string shPath,string outPath ,params string [] arg )
+        public CommandExcute(string outPath ,string shPath="sh",params string [] arg )
         {
             _path = shPath;
             _arg = arg;
