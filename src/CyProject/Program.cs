@@ -18,7 +18,11 @@ namespace CyProject
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+            WebHost.CreateDefaultBuilder(args).UseKestrel(options =>
+            {
+                //所有controller都不限制post的body大小
+                options.Limits.MaxRequestBodySize = null;
+            })
                 .UseStartup<Startup>();
     }
 }

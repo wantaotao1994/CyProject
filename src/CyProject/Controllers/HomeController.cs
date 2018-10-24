@@ -40,8 +40,6 @@ namespace CyProject.Controllers
             return View();
         }
 
-    
-
         /// <summary>
         /// 获取队列情况
         /// </summary>
@@ -57,6 +55,7 @@ namespace CyProject.Controllers
         /// </summary>
         /// <returns>The task one.</returns>
         /// <param name="files">Files.</param>
+        [DisableRequestSizeLimit]
         public async Task<FastqToFasaQueryRes>  BeginTaskOne(List<IFormFile> files)
         {
             string tempBasePath =   CheckBaseTempPath();
