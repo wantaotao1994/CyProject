@@ -63,14 +63,16 @@ namespace CyProject.Controllers
             string iRefFaPath = "";
             if (Request.Form.Files.Count > 0)  //get  first
             {
-                string fileFullPath = tempBasePath + DateTime.Now.Millisecond + Request.Form.Files[0].FileName;
+                string guid = new Guid().ToString("N");
+
+                string fileFullPath = tempBasePath + guid +"/"+ Request.Form.Files[0].FileName;
                 foreach (var item in files)
                 {
                     using (var stream = new FileStream(fileFullPath, FileMode.Create))
                     {
-                        
-                        await item.CopyToAsync(stream);
+                        await Request.Form.Files[0].CopyToAsync(stream);
                     }
+
                     if (item.Name.Contains(".fasq"))
                     {
                         inFastqPath = fileFullPath;
@@ -80,7 +82,6 @@ namespace CyProject.Controllers
                         iRefFaPath = fileFullPath;
                     }
                 }
-                string guid = new Guid().ToString("N");
                 HttpContext.Session.SetString("guid", guid);
                 if (string.IsNullOrEmpty(inFastqPath) ||string.IsNullOrEmpty(iRefFaPath))
                 {
@@ -156,7 +157,7 @@ namespace CyProject.Controllers
         }
 
         private  string  CheckBaseTempPath(){
-            var filePath = @"AppData/temp";
+            var filePath = @"AppData/temp/";
 
             if (!Directory.Exists(filePath))
             {
