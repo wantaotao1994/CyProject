@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using CyProject.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.IO.Compression;
 using CommanderHelper;
 using CyProject.Model.JsonModel;
 using CyProject.Schedule;
@@ -72,15 +73,27 @@ namespace CyProject.Controllers
                     {
                         await Request.Form.Files[0].CopyToAsync(stream);
                     }
+                    string extraPath = tempBasePath + guid + "/temp";
+                    ZipFile.ExtractToDirectory(fileFullPath, extraPath);
 
-                    if (item.Name.Contains(".fasq"))
+                   var  list =   new DirectoryInfo(extraPath).GetFileSystemInfos();
+                  var  fastq=  list.FirstOrDefault(r => r.Extension == "fastq");
+                    
+                    var  reffa=  list.FirstOrDefault(r => r.Extension == "fa");
+                    if (fastq ==null  || reffa==null)
                     {
-                        inFastqPath = fileFullPath;
+                        return new FastqToFasaQueryRes()
+                        {
+                            Code = 500,
+                            Message= "上传文件不正确"
+                        };
                     }
-                    else if (item.Name.Contains(".fa"))
-                    {
-                        iRefFaPath = fileFullPath;
-                    }
+                   
+                    //  list.Select(r=>r.);
+                    inFastqPath = fastq.FullName;
+
+                    iRefFaPath = reffa.FullName;
+
                 }
                 HttpContext.Session.SetString("guid", guid);
                 if (string.IsNullOrEmpty(inFastqPath) ||string.IsNullOrEmpty(iRefFaPath))
@@ -97,7 +110,6 @@ namespace CyProject.Controllers
                     InFastqPath = inFastqPath,
                     InRefFaPath = iRefFaPath,
                     IsComplete = false,
-
                 }));
                 return new FastqToFasaQueryRes()
                 {
